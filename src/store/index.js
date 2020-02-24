@@ -6,8 +6,8 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    results: [],
-    loading: false
+    loading: false,
+    results: []
   },
   mutations: {
     fetchData(state, payload) {
@@ -21,12 +21,14 @@ export default new Vuex.Store({
     setLoading(context) {
       context.commit("setLoading");
     },
+
     fetchData(context, query = "web") {
       context.dispatch("setLoading");
       axios
         .get(`https://api.github.com/search/repositories?q=${query}`)
         .then(response => {
           context.commit("fetchData", response.data.items);
+          console.log(response.data);
         })
         .then(() => context.dispatch("setLoading"))
         .catch(error => {
