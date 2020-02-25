@@ -4,6 +4,8 @@
       <router-view></router-view>
     </keep-alive>
 
+    <Toast v-if="showToast" />
+
     <h1>Search</h1>
     <div>
       <form @submit.prevent="submitSearch">
@@ -52,10 +54,13 @@
 
 <script>
 // @ is an alias to /src
-/* import HelloWorld from "@/components/HelloWorld.vue"; */
+import Toast from "@/components/Toast.vue";
 
 export default {
   name: "Search",
+  components: {
+    Toast
+  },
   data: () => ({
     searchTerm: ""
   }),
@@ -65,6 +70,9 @@ export default {
     },
     results: function() {
       return this.$store.state.results;
+    },
+    showToast: function() {
+      return this.$store.state.showToast;
     }
   },
   watch: {},

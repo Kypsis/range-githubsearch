@@ -9,25 +9,41 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     bookmarks: [],
-    repositoryDetails: {},
     loading: false,
+    previousBookmarks: null,
+    readme: "",
+    repositoryDetails: {},
     results: [],
-    readme: ""
+    showToast: false,
+    toastMessage: ""
   },
   mutations: {
     addBookmark(state, payload) {
       if (state.bookmarks.some(bookmark => bookmark.link === payload.link)) {
         return;
       }
+      state.toastMessage = "Added";
+      state.previousBookmarks = state.bookmarks;
       state.bookmarks = [...state.bookmarks, payload];
+      state.showToast = true;
     },
     removeBookmark(state, payload) {
+      state.toastMessage = "Removed";
+      state.previousBookmarks = state.bookmarks;
       state.bookmarks = state.bookmarks.filter(
         bookmark => bookmark.link !== payload
       );
+      state.showToast = true;
+    },
+    undoBookmark(state) {
+      state.bookmarks = state.previousBookmarks;
+      state.showToast = false;
     },
     setLoading(state) {
       state.loading = !state.loading;
+    },
+    hideToast(state) {
+      state.showToast = false;
     },
     searchForRepositories(state, payload) {
       state.results = payload;
@@ -46,8 +62,14 @@ export default new Vuex.Store({
     removeBookmark(context, link) {
       context.commit("removeBookmark", link);
     },
+    undoBookmark(context) {
+      context.commit("undoBookmark");
+    },
     setLoading(context) {
       context.commit("setLoading");
+    },
+    hideToast(context) {
+      context.commit("hideToast");
     },
     searchForRepositories(context, query) {
       context.dispatch("setLoading");

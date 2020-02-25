@@ -1,5 +1,6 @@
 <template>
   <div class="bookmarks">
+    <Toast v-if="showToast" />
     <h1>Bookmarks</h1>
     <div id="bookmarks-item" v-for="bookmark in bookmarks" :key="bookmark.link">
       <div @click.stop="linkToRepo(bookmark.slug)">{{ bookmark.link }}</div>
@@ -10,16 +11,19 @@
 
 <script>
 // @ is an alias to /src
-/* import HelloWorld from "@/components/HelloWorld.vue"; */
+import Toast from "@/components/Toast.vue";
 
 export default {
   name: "Bookmarks",
   components: {
-    /* HelloWorld */
+    Toast
   },
   computed: {
     bookmarks: function() {
       return this.$store.state.bookmarks;
+    },
+    showToast: function() {
+      return this.$store.state.showToast;
     }
   },
   methods: {
