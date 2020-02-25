@@ -39,7 +39,7 @@
           <div>{{ result.forks_count }}</div>
           <div
             @click.stop="
-              addBookmark({ link: result.html_url, slug: full_name })
+              addBookmark({ link: result.html_url, slug: result.full_name })
             "
           >
             Bookmark

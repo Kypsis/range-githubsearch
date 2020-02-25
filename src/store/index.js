@@ -11,10 +11,14 @@ export default new Vuex.Store({
     bookmarks: [],
     repositoryDetails: {},
     loading: false,
-    results: []
+    results: [],
+    readme: ""
   },
   mutations: {
     addBookmark(state, payload) {
+      if (state.bookmarks.some(bookmark => bookmark.link === payload.link)) {
+        return;
+      }
       state.bookmarks = [...state.bookmarks, payload];
     },
     removeBookmark(state, payload) {
@@ -30,6 +34,9 @@ export default new Vuex.Store({
     },
     fetchRepository(state, payload) {
       state.repositoryDetails = payload;
+    },
+    fetchReadme(state, payload) {
+      state.readme = payload;
     }
   },
   actions: {
@@ -56,14 +63,12 @@ export default new Vuex.Store({
         });
     },
     fetchRepository(context, slug) {
-      context.dispatch("setLoading");
       axios
         .get(`https://api.github.com/repos/${slug}`)
         .then(response => {
           context.commit("fetchRepository", response.data);
           console.log(response.data);
         })
-        .then(() => context.dispatch("setLoading"))
         .catch(error => {
           console.log(error.message);
         });
@@ -72,7 +77,7 @@ export default new Vuex.Store({
       axios
         .get(`https://api.github.com/repos/${slug}/readme`)
         .then(response => {
-          /* context.commit("fetchRepository", response.data); */
+          context.commit("fetchReadme", atob(response.data.content));
           console.log(response.data);
         })
         .catch(error => {

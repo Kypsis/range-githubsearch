@@ -2,15 +2,19 @@
   <div>
     Details Page
     <div>{{ repositoryDetails.name }}</div>
-    <div>{{ repositoryDetails.owner.login }}</div>
+    <div>{{ repositoryDetails.owner && repositoryDetails.owner.login }}</div>
     <div>{{ repositoryDetails.stargazers_count }}</div>
     <div>{{ repositoryDetails.forks_count }}</div>
+    <VueMarkdown :source="readme"></VueMarkdown>
   </div>
 </template>
 
 <script>
+import VueMarkdown from "vue-markdown-v2";
+
 export default {
   name: "RepositoryDetails",
+  components: { VueMarkdown },
   mounted: function() {
     if (!this.slug) {
       this.$router.replace("/");
@@ -24,6 +28,9 @@ export default {
     },
     repositoryDetails: function() {
       return this.$store.state.repositoryDetails;
+    },
+    readme: function() {
+      return this.$store.state.readme.substring(0, 2400);
     }
   }
 };
