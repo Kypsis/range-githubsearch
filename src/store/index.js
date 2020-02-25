@@ -1,5 +1,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
+import createPersistedState from "vuex-persistedstate";
+
 import axios from "axios";
 
 Vue.use(Vuex);
@@ -7,6 +9,7 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     bookmarks: [],
+    repositoryDetails: {},
     loading: false,
     results: []
   },
@@ -19,11 +22,14 @@ export default new Vuex.Store({
         bookmark => bookmark.link !== payload
       );
     },
-    fetchData(state, payload) {
-      state.results = payload;
-    },
     setLoading(state) {
       state.loading = !state.loading;
+    },
+    searchForRepositories(state, payload) {
+      state.results = payload;
+    },
+    fetchRepository(state, payload) {
+      state.repositoryDetails = payload;
     }
   },
   actions: {
@@ -36,21 +42,44 @@ export default new Vuex.Store({
     setLoading(context) {
       context.commit("setLoading");
     },
-
-    fetchData(context, query = "web") {
+    searchForRepositories(context, query) {
       context.dispatch("setLoading");
       axios
         .get(`https://api.github.com/search/repositories?q=${query}`)
         .then(response => {
-          context.commit("fetchData", response.data.items);
+          context.commit("searchForRepositories", response.data.items);
           console.log(response.data);
         })
         .then(() => context.dispatch("setLoading"))
         .catch(error => {
           console.log(error.message);
         });
+    },
+    fetchRepository(context, slug) {
+      context.dispatch("setLoading");
+      axios
+        .get(`https://api.github.com/repos/${slug}`)
+        .then(response => {
+          context.commit("fetchRepository", response.data);
+          console.log(response.data);
+        })
+        .then(() => context.dispatch("setLoading"))
+        .catch(error => {
+          console.log(error.message);
+        });
+    },
+    fetchReadme(context, slug) {
+      axios
+        .get(`https://api.github.com/repos/${slug}/readme`)
+        .then(response => {
+          /* context.commit("fetchRepository", response.data); */
+          console.log(response.data);
+        })
+        .catch(error => {
+          console.log(error.message);
+        });
     }
   },
-
+  plugins: [createPersistedState({ paths: ["bookmarks"] })],
   modules: {}
 });

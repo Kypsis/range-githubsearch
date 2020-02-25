@@ -31,13 +31,17 @@
           id="results-item"
           v-for="result in results"
           :key="result.id"
-          @click.stop="linkToRepo(result.html_url)"
+          @click.stop="linkToRepo(result.full_name)"
         >
           <div>{{ result.name }}</div>
           <div>{{ result.owner.login }}</div>
           <div>{{ result.stargazers_count }}</div>
           <div>{{ result.forks_count }}</div>
-          <div @click.stop="addBookmark({ link: result.html_url })">
+          <div
+            @click.stop="
+              addBookmark({ link: result.html_url, slug: full_name })
+            "
+          >
             Bookmark
           </div>
         </div>
@@ -52,12 +56,6 @@
 
 export default {
   name: "Search",
-  components: {
-    /* HelloWorld */
-  },
-  /* created: function() {
-    this.$store.dispatch("fetchData", "studio");
-  }, */
   data: () => ({
     searchTerm: ""
   }),
@@ -71,14 +69,19 @@ export default {
   },
   watch: {},
   methods: {
-    addBookmark: function(link) {
-      this.$store.dispatch("addBookmark", link);
+    addBookmark: function(linkObject) {
+      this.$store.dispatch("addBookmark", linkObject);
     },
-    linkToRepo: function(link) {
-      window.open(link, "_blank");
+    linkToRepo: function(slug) {
+      this.$router.push({
+        name: "RepositoryDetails",
+        params: {
+          slug
+        }
+      });
     },
     submitSearch: function() {
-      this.$store.dispatch("fetchData", this.searchTerm);
+      this.$store.dispatch("searchForRepositories", this.searchTerm);
       this.searchTerm = "";
     }
   }
