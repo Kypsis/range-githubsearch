@@ -1,16 +1,21 @@
 <template>
-  <div class="bookmarks">
+  <div class="component-container">
     <Toast v-if="showToast" />
     <h1>Bookmarks</h1>
-    <div id="bookmarks-item" v-for="bookmark in bookmarks" :key="bookmark.link">
-      <div @click.stop="linkToRepo(bookmark.slug)">{{ bookmark.link }}</div>
-      <div @click="removeBookmark(bookmark.link)">Remove</div>
-    </div>
+    <table>
+      <tr v-for="bookmark in bookmarks" :key="bookmark.link">
+        <td @click.stop="linkToRepo(bookmark.slug)">{{ bookmark.link }}</td>
+        <td>
+          <div id="bookmarks-remove" @click="removeBookmark(bookmark.link)">
+            Remove
+          </div>
+        </td>
+      </tr>
+    </table>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
 import Toast from "@/components/Toast.vue";
 
 export default {
@@ -41,3 +46,17 @@ export default {
   }
 };
 </script>
+
+<style lang="scss" scoped>
+#bookmarks-remove {
+  background-color: #c33a3a;
+  border-radius: 5px;
+  color: white;
+  padding: 0.4em;
+  text-align: center;
+
+  &:hover {
+    background-color: #85242c;
+  }
+}
+</style>

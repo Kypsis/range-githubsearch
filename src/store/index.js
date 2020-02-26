@@ -15,6 +15,7 @@ export default new Vuex.Store({
     repositoryDetails: {},
     results: [],
     showToast: false,
+    timer: null,
     toastMessage: ""
   },
   mutations: {
@@ -39,6 +40,10 @@ export default new Vuex.Store({
       state.bookmarks = state.previousBookmarks;
       state.showToast = false;
     },
+    clearReadme(state) {
+      state.readme = "";
+    },
+
     setLoading(state) {
       state.loading = !state.loading;
     },
@@ -65,11 +70,17 @@ export default new Vuex.Store({
     undoBookmark(context) {
       context.commit("undoBookmark");
     },
+    clearReadme(context) {
+      context.commit("clearReadme");
+    },
     setLoading(context) {
       context.commit("setLoading");
     },
     hideToast(context) {
-      context.commit("hideToast");
+      clearTimeout(context.state.timer);
+      context.state.timer = setTimeout(() => {
+        context.commit("hideToast");
+      }, 5000);
     },
     searchForRepositories(context, query) {
       context.dispatch("setLoading");
@@ -77,7 +88,6 @@ export default new Vuex.Store({
         .get(`https://api.github.com/search/repositories?q=${query}`)
         .then(response => {
           context.commit("searchForRepositories", response.data.items);
-          console.log(response.data);
         })
         .then(() => context.dispatch("setLoading"))
         .catch(error => {
@@ -89,19 +99,19 @@ export default new Vuex.Store({
         .get(`https://api.github.com/repos/${slug}`)
         .then(response => {
           context.commit("fetchRepository", response.data);
-          console.log(response.data);
         })
         .catch(error => {
           console.log(error.message);
         });
     },
     fetchReadme(context, slug) {
+      context.dispatch("setLoading");
       axios
         .get(`https://api.github.com/repos/${slug}/readme`)
         .then(response => {
           context.commit("fetchReadme", atob(response.data.content));
-          console.log(response.data);
         })
+        .then(() => context.dispatch("setLoading"))
         .catch(error => {
           console.log(error.message);
         });

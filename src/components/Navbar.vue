@@ -1,8 +1,16 @@
 <template>
-  <div id="nav">
-    <router-link to="/">Search</router-link>|
-    <router-link to="/bookmarks">Bookmarks</router-link>
-    <div v-if="bookmarks.length">({{ bookmarks.length }})</div>
+  <div id="nav-container">
+    <div id="nav-items">
+      <router-link to="/">Search</router-link>
+      <div id="nav-bookmarks">
+        <router-link to="/bookmarks">Bookmarks</router-link>
+        <div id="nav-placeholder">
+          <div id="nav-badge" v-if="bookmarks.length">
+            <b>{{ bookmarks.length }}</b>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -18,8 +26,34 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-#nav {
-  padding: 30px;
+#nav-badge {
+  background-color: #405b77;
+  border-radius: 10px;
+  color: goldenrod;
+  margin-left: 1em;
+  padding: 0.3em;
+  text-align: center;
+  width: 1.2em;
+}
+
+#nav-bookmarks {
+  display: flex;
+  align-items: center;
+  justify-content: left;
+}
+
+#nav-container {
+  background-color: rgb(233, 233, 233);
+  display: flex;
+  justify-content: center;
+  height: 5em;
+}
+
+#nav-items {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  width: 20em;
 
   a {
     font-weight: bold;
@@ -28,6 +62,10 @@ export default {
     &.router-link-exact-active {
       color: #42b983;
     }
+  }
+
+  #nav-placeholder {
+    width: 2em;
   }
 }
 </style>

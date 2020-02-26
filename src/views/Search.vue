@@ -1,5 +1,5 @@
 <template>
-  <div class="search">
+  <div class="component-container">
     <keep-alive>
       <router-view></router-view>
     </keep-alive>
@@ -19,46 +19,51 @@
     </div>
 
     <div>
-      <div id="results-loading" v-if="loading">
+      <!-- <div id="search-loading" v-if="loading">
         <div>Loading...</div>
-      </div>
-      <div id="results-list" v-if="!loading">
-        <div v-if="results.length" id="results-header">
-          <b>Repository name:</b>
-          <b>Author:</b>
-          <b>Amount of stars:</b>
-          <b>Amount of forks:</b>
-        </div>
-        <div
-          id="results-item"
+      </div>-->
+      <Loader v-if="loading" />
+      <table v-if="!loading">
+        <tr v-if="results.length">
+          <th>Repository name:</th>
+          <th>Author:</th>
+          <th>Stars:</th>
+          <th>Forks:</th>
+          <th></th>
+        </tr>
+        <tr
           v-for="result in results"
           :key="result.id"
           @click.stop="linkToRepo(result.full_name)"
         >
-          <div>{{ result.name }}</div>
-          <div>{{ result.owner.login }}</div>
-          <div>{{ result.stargazers_count }}</div>
-          <div>{{ result.forks_count }}</div>
-          <div
-            @click.stop="
-              addBookmark({ link: result.html_url, slug: result.full_name })
-            "
-          >
-            Bookmark
-          </div>
-        </div>
-      </div>
+          <td>{{ result.name }}</td>
+          <td>{{ result.owner.login }}</td>
+          <td>⭐{{ result.stargazers_count }}</td>
+          <td>🔀{{ result.forks_count }}</td>
+          <td>
+            <div
+              id="search-bookmark"
+              @click.stop="
+                addBookmark({ link: result.html_url, slug: result.full_name })
+              "
+            >
+              Bookmark
+            </div>
+          </td>
+        </tr>
+      </table>
     </div>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
 import Toast from "@/components/Toast.vue";
+import Loader from "@/components/Loader.vue";
 
 export default {
   name: "Search",
   components: {
+    Loader,
     Toast
   },
   data: () => ({
@@ -97,27 +102,20 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.search {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+input {
+  margin-bottom: 2em;
+  padding: 0.5em;
 }
 
-#results-header {
-  display: flex;
-  justify-content: space-between;
-  width: 50em;
-}
+#search-bookmark {
+  background-color: #3a8a5e;
+  border-radius: 5px;
+  color: white;
+  padding: 0.4em;
+  text-align: center;
 
-#results-item {
-  cursor: pointer;
-  display: flex;
-  justify-content: space-between;
-}
-
-#results-list {
-  display: flex;
-  flex-direction: column;
-  width: 50em;
+  &:hover {
+    background-color: #256b45;
+  }
 }
 </style>
